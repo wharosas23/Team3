@@ -1,10 +1,26 @@
 // Constructor to create an XHR object
 function coreHTTP() {
-  this.http = new XMLHttpRequest();
+//  this.http = new XMLHttpRequest();
+  this.get = async function (url) {
+    return new Promise((resolve,reject) => {
+      fetch(url)
+      .then(function(response) {
+         return response.json();
+      })
+      .then(function(data) {
+        console.log(data);
+        resolve(data);
+      })
+      .catch(function(error) {
+        console.log(error)
+        reject(error);
+      });
+    })
+  };
 }
 
 /* <<< HTTP GET request >>> */
-coreHTTP.prototype.get = function(url, callback) {
+/*coreHTTP.prototype.get = function(url, callback) {
   // Open the connection
   this.http.open("GET", url);
 
@@ -20,7 +36,7 @@ coreHTTP.prototype.get = function(url, callback) {
   // Send the request
   this.http.send();
 }
-
+*/
 /* <<< HTTP POST request >>> */
 coreHTTP.prototype.post = function(url, data, callback) {
   this.http.open("POST", url);

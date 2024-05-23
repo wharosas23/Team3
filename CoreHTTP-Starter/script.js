@@ -22,6 +22,7 @@ function ShowError(err) {
 }
 
 function ProcessGet(err, respStr) {
+  console.log("getting")
   if (err) {
     ShowError(err);
   } else {
@@ -60,7 +61,9 @@ function sendRequest(reqType, targetURL, data) {
 
   switch (reqType) {
     case "get": // Get users from the endpoint
-      http.get(targetURL, ProcessGet);
+      http.get(targetURL)
+      .then(function (response) {ShowResponse(response)})
+      //.catch(function (error) {ShowError(error)})
       break;
     case "post": // Post (add) user to the endpoint
       http.post(targetURL, data, ProcessPost);
