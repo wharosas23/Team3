@@ -16,6 +16,10 @@ function ShowResponse(responseData) {
   document.querySelector("#response").innerHTML = html;
 }
 
+function clear() {
+  document.querySelector("#response").innerHTML = "";
+}
+
 function ShowError(err) {
   html = `<p>${err}</p>`;
   document.querySelector("#response").innerHTML = html;
@@ -56,6 +60,15 @@ function ProcessDelete(err, respStr) {
   }
 }
 
+function ProcessPatch(err, respStr) {
+  if (err) {
+    ShowError(err);
+  } else {
+    const respObj = JSON.parse(respStr);
+    ShowResponse(respObj);
+  }
+}
+
 function sendRequest(reqType, targetURL, data) {
 
   switch (reqType) {
@@ -70,7 +83,10 @@ function sendRequest(reqType, targetURL, data) {
       break;
     case "delete": // Delete user in the placeholder website
       http.delete(targetURL, ProcessDelete);
-      break;            
+      break;
+    case "patch": // Post (add) user to the endpoint
+      http.patch(targetURL, data, ProcessPatch);
+      break;              
   }
 }
 
@@ -80,7 +96,7 @@ function ValidId(id, required = false) {
   if (id.length > 0) {
     isValid = (Number.isInteger(Number(id)))
     if (isValid) {
-      isValid = ((Number(id) > 1 && Number(id) < 11));
+      isValid = ((Number(id) >= 1 && Number(id) < 11));
     }
   } else if (required) {
     isValid = false;
@@ -120,6 +136,7 @@ function SetupRequest() {
     }
   }
 
+  console.log(reqType);
   // Form the URL and request
   let okToSend;
   if (reqType === "get") {
@@ -162,6 +179,22 @@ function SetupRequest() {
     okToSend = (ValidId(document.querySelector("#uIdArea>input").value,true));
   };
   
+  if (reqType === "patch") {
+    okToSend = false;
+    if (ValidId(document.querySelector("#uIdArea>input").value,true)) {
+      let uFullName = document.querySelector("#uNameArea>input").value;
+      if (ValidName(uFullName)) {
+        let uName = uFullName.split(" ")[0].trim();
+        let uMail = uName.concat("@spu.edu");
+        data = {
+          name:`${uFullName}`,
+          username:`${uName}`,
+          email:`${uMail}`};
+        okToSend = true;
+      };
+    }
+  }
+
   if (okToSend) {
     route = route.concat(document.querySelector("#uIdArea>input").value);
     document.querySelector("#uIdArea>input").style.border = "1px solid lightgrey";
@@ -180,18 +213,27 @@ function SetupInput(reqType) {
     case "get":
       document.querySelector("#uIdArea").style.display = "flex";
       document.querySelector("#uNameArea").style.display = "none";
+      clear();
       break;
     case "post":
       document.querySelector("#uIdArea").style.display = "none";
       document.querySelector("#uNameArea").style.display = "flex";
+      clear();
       break;
     case "put":
       document.querySelector("#uIdArea").style.display = "flex";
       document.querySelector("#uNameArea").style.display = "flex";
+      clear();
       break;
     case "delete":
       document.querySelector("#uIdArea").style.display = "flex";
       document.querySelector("#uNameArea").style.display = "none";
+      clear();
+      break;
+    case "patch":
+      document.querySelector("#uIdArea").style.display = "flex";
+      document.querySelector("#uNameArea").style.display = "flex";
+      clear();
       break;
   }
 }
@@ -206,6 +248,8 @@ function StartUp() {
   document.querySelector("#rbPost").addEventListener("change", () => SetupInput("post"));
   document.querySelector("#rbPut").addEventListener("change", () => SetupInput("put"));
   document.querySelector("#rbDelete").addEventListener("change", () => SetupInput("delete"));
+  document.querySelector("#rbPatch").addEventListener("change", () => SetupInput("patch"));
+
 
   // Add the listener to the SEND button
   document.querySelector("#SendReq").addEventListener("click", (e) => {
