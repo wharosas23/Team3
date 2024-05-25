@@ -1,4 +1,4 @@
-// Class for coreHTTP
+// Constructor to create an XHR object
 class coreHTTP {
   async get(url) {
     return await this.request('GET', url);
@@ -96,7 +96,6 @@ class coreHTTP {
 
 //   this.http.send(JSON.stringify(data));
 // }
-
 // /* <<< HTTP DELETE request >>> */
 // coreHTTP.prototype.delete = function(url, callback) {
 //   this.http.open("DELETE", url);
