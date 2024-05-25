@@ -21,61 +21,94 @@ function ShowError(err) {
   document.querySelector("#response").innerHTML = html;
 }
 
-function ProcessGet(err, respStr) {
-  console.log("getting")
-  if (err) {
-    ShowError(err);
-  } else {
-    const respObj = JSON.parse(respStr);
-    ShowResponse(respObj);
-  }
-}
+// function ProcessGet(err, respStr) {
+//   if (err) {
+//     ShowError(err);
+//   } else {
+//     const respObj = JSON.parse(respStr);
+//     ShowResponse(respObj);
+//   }
+// }
 
-function ProcessPost(err, respStr) {
-  if (err) {
-    ShowError(err);
-  } else {
-    const respObj = JSON.parse(respStr);
-    ShowResponse(respObj);
-  }
-}
+// function ProcessPost(err, respStr) {
+//   if (err) {
+//     ShowError(err);
+//   } else {
+//     const respObj = JSON.parse(respStr);
+//     ShowResponse(respObj);
+//   }
+// }
 
-function ProcessPut(err, respStr) {
-  if (err) {
-    ShowError(err);
-  } else {
-    const respObj = JSON.parse(respStr);
-    ShowResponse(respObj);
-  }
-}
+// function ProcessPut(err, respStr) {
+//   if (err) {
+//     ShowError(err);
+//   } else {
+//     const respObj = JSON.parse(respStr);
+//     ShowResponse(respObj);
+//   }
+// }
 
-function ProcessDelete(err, respStr) {
-  if (err) {
-    ShowError(err);
-  } else {
-    ShowResponse(respStr);
-  }
-}
+// function ProcessDelete(err, respStr) {
+//   if (err) {
+//     ShowError(err);
+//   } else {
+//     ShowResponse(respStr);
+//   }
+// }
 
 function sendRequest(reqType, targetURL, data) {
-
   switch (reqType) {
-    case "get": // Get users from the endpoint
-      http.get(targetURL)
-      .then(function (response) {ShowResponse(response)})
-      //.catch(function (error) {ShowError(error)})
-      break;
-    case "post": // Post (add) user to the endpoint
-      http.post(targetURL, data, ProcessPost);
-      break;
-    case "put": // Put (update) user in the endpoint
-      http.put(targetURL, data, ProcessPut);
-      break;
-    case "delete": // Delete user in the placeholder website
-      http.delete(targetURL, ProcessDelete);
-      break;            
+      case "get": // Get users from the endpoint
+          http.get(targetURL)
+              .then( (response)=> {
+                  ShowResponse(response);
+              })
+              .catch((error) => {
+                  ShowError(error);
+              });
+          break;
+
+      case "post": // Post (add) user to the endpoint
+          http.post(targetURL, data)
+              .then( (response)=> {
+                  ShowResponse(response);
+              })
+              .catch( (error) => {
+                  ShowError(error);
+              });
+          break;
+
+      case "put": // Put (update) user in the endpoint
+          http.put(targetURL, data)
+              .then( (response)=> {
+                  ShowResponse(response);
+              })
+              .catch( (error) => {
+                  ShowError(error);
+              });
+          break;
+
+      case "delete": // Delete user in the placeholder
+          http.delete(targetURL)
+              .then( (response)=> {
+                  ShowResponse(response);
+              })
+              .catch( (error) => {
+                  ShowError(error);
+              });
+      case "patch": // Patch user to the endpoint
+            http.patch(targetURL,data)
+                .then( (response)=> {
+                    ShowResponse(response);
+                })
+                .catch( (error) => {
+                    ShowError(error);
+                });
+            break;  
   }
 }
+
+
 
 function ValidId(id, required = false) {
   let isValid;
@@ -160,6 +193,22 @@ function SetupRequest() {
     }
   }
 
+  if (reqType === "patch") {
+    okToSend = false;
+    if (ValidId(document.querySelector("#uIdArea>input").value,true)) {
+      let uFullName = document.querySelector("#uNameArea>input").value;
+      if (ValidName(uFullName)) {
+        let uName = uFullName.split(" ")[0].trim();
+        let uMail = uName.concat("@spu.edu");
+        data = {
+          name:`${uFullName}`,
+          username:`${uName}`,
+          email:`${uMail}`};
+        okToSend = true;
+      };
+    }
+  }
+
   if (reqType === "delete") {
     document.querySelector("#uNameArea>input").value = "";
     okToSend = (ValidId(document.querySelector("#uIdArea>input").value,true));
@@ -196,6 +245,11 @@ function SetupInput(reqType) {
       document.querySelector("#uIdArea").style.display = "flex";
       document.querySelector("#uNameArea").style.display = "none";
       break;
+    case "patch":
+      document.querySelector("#uIdArea").style.display = "flex";
+      document.querySelector("#uNameArea").style.display = "flex";
+      break;
+    
   }
 }
 
@@ -209,6 +263,7 @@ function StartUp() {
   document.querySelector("#rbPost").addEventListener("change", () => SetupInput("post"));
   document.querySelector("#rbPut").addEventListener("change", () => SetupInput("put"));
   document.querySelector("#rbDelete").addEventListener("change", () => SetupInput("delete"));
+  document.querySelector("#rbPatch").addEventListener("change", () => SetupInput("patch"));
 
   // Add the listener to the SEND button
   document.querySelector("#SendReq").addEventListener("click", (e) => {
