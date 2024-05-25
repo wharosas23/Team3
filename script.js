@@ -25,7 +25,6 @@ function ShowError(err) {
   document.querySelector("#response").innerHTML = html;
 }
 
-<<<<<<< HEAD
 // function ProcessGet(err, respStr) {
 //   if (err) {
 //     ShowError(err);
@@ -34,16 +33,6 @@ function ShowError(err) {
 //     ShowResponse(respObj);
 //   }
 // }
-=======
-function ProcessGet(err, respStr) {
-  if (err) {
-    ShowError(err);
-  } else {
-    const respObj = JSON.parse(respStr);
-    ShowResponse(respObj);
-  }
-}
->>>>>>> 1221b6742c2780609f1f13970877e8535ce2d12f
 
 // function ProcessPost(err, respStr) {
 //   if (err) {
@@ -180,7 +169,6 @@ function SetupRequest() {
     }
   }
 
-  console.log(reqType);
   // Form the URL and request
   let okToSend;
   if (reqType === "get") {
@@ -314,10 +302,6 @@ function StartUp() {
   document.querySelector("#rbPut").addEventListener("change", () => SetupInput("put"));
   document.querySelector("#rbDelete").addEventListener("change", () => SetupInput("delete"));
   document.querySelector("#rbPatch").addEventListener("change", () => SetupInput("patch"));
-<<<<<<< HEAD
-=======
-
->>>>>>> 1221b6742c2780609f1f13970877e8535ce2d12f
 
   // Add the listener to the SEND button
   document.querySelector("#SendReq").addEventListener("click", (e) => {
